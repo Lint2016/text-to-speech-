@@ -92,25 +92,47 @@ footer{
 
 @media only screen and (max-width: 364px) and (max-height: 512px),
        only screen and  (max-width: 600px) {
+        body, html{
+            margin: 0;
+            padding: 0;
+           max-width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+        *{
+            margin: 0;
+            padding: 0;
+        }
     
     h1 {
         font-size: 15px;
         margin-top: 15px;
         margin-bottom: 15px;
+        text-align: center;
+
     }
     
     textarea {
-        width: 90%; /* Make it 90% of the screen width */
-        height: 200px; /* Adjust height as needed */
+        width: 80px; /* Make it 90% of the screen width */
+        min-height: 150px; /* Adjust height as needed */
         font-size: 14px; /* Slightly reduce font size */
-        padding: 30px; /* Adjust padding to suit the new size */
+         /* Adjust padding to suit the new size */
         touch-action: manipulation;
         border-radius: 10px;
-        border: 0;
         outline: 0;
-        margin-left: 50px;
-        margin-right: 50px;
+        background: #403d84;
+        padding-left: 20%;
+        padding-right: 20%;
+        display: block;
+        box-sizing: border-box;
+        white-space: pre-wrap; /* Ensures that text wraps and respects new lines */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        resize: none;
     }
+
+    
     
     textarea::placeholder {
         font-size: 15px; /* Adjust placeholder font size for readability */
@@ -121,10 +143,17 @@ footer{
         flex-direction: column;
         gap: 10px;
         box-sizing: border-box;
-        padding: 2px;
-        margin-bottom: 25px;
+        padding: 0;
+        margin-bottom:20px;
     }
-    
+    .hero{
+        width: 100%;
+        min-height: 100vh;
+        justify-content: center;
+        align-content: center;
+        display: flex;
+        flex-direction: column;
+    }
     button {
         font-size: 12px;
         padding: 8px 15px;
@@ -137,8 +166,9 @@ footer{
         width: 60%;
         height: 40px;
     }
-   
-}
+    
+} 
+
 
 /* Media query for tablets (600px to 1024px) */
 @media (max-width: 1024px) {
