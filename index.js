@@ -18,7 +18,11 @@ voiceSelect.addEventListener('change', ()=>{
 /* the below codes allow us to listen to the speech by clicking on the listen button*/
 
 document.querySelector('#listen').addEventListener('click', ()=>{
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+  /*the below codes set the text to be spoken */ 
     speech.text = document.querySelector('textarea').value;
+    /* speak the text*/
     window.speechSynthesis.speak(speech);
 })
 
