@@ -1,44 +1,100 @@
 let speech = new SpeechSynthesisUtterance();
 let voices = [];
-
 let voiceSelect = document.querySelector('select');
-window.speechSynthesis.onvoiceschanged =()=>{
-    voices = window.speechSynthesis.getVoices();
-    speech.voice = voices[0]; /* by default the devices will use the first voice on the list */
+let rateInput = document.querySelector('#rate');
+let pitchInput = document.querySelector('#pitch');
+let rateValue = document.querySelector('#rate-value');
+let pitchValue = document.querySelector('#pitch-value');
+const loadingIndicator = document.getElementById('loading-indicator');
+const waveformContainer = document.getElementById('waveform-container');
 
-    /* below we write codes which will allow us to switch voices*/
+// Initialize speech settings
+speech.rate = 1;
+speech.pitch = 1;
 
-    voices.forEach((voice, i) => (voiceSelect.options[i] = new Option(voice.name, i)));
-}
-/* the below codes allow us to select a different type of voice from the list*/
-voiceSelect.addEventListener('change', ()=>{
-  speech.voice = voices[voiceSelect.value];
+// Update rate and pitch values
+rateInput.addEventListener('input', () => {
+    speech.rate = rateInput.value;
+    rateValue.textContent = rateInput.value;
 });
 
-/* the below codes allow us to listen to the speech by clicking on the listen button*/
+pitchInput.addEventListener('input', () => {
+    speech.pitch = pitchInput.value;
+    pitchValue.textContent = pitchInput.value;
+});
 
-document.querySelector('#listen').addEventListener('click', ()=>{
-  // Cancel any ongoing speech
-  window.speechSynthesis.cancel();
-  /*the below codes set the text to be spoken */ 
-    speech.text = document.querySelector('textarea').value;
-    /* speak the text*/
+// Initialize speech synthesis
+window.speechSynthesis.onvoiceschanged = () => {
+    voices = window.speechSynthesis.getVoices();
+    speech.voice = voices[0];
+
+    voices.forEach((voice, i) => {
+        if(voice.lang.includes('en')) {
+            voiceSelect.selectedIndex = i;
+            speech.voice = voice;
+        }
+        voiceSelect.options[i] = new Option(voice.name, i);
+    });
+};
+
+// Voice selection
+voiceSelect.addEventListener('change', () => {
+    speech.voice = voices[voiceSelect.value];
+});
+
+// Speech events
+speech.onstart = () => {
+    waveformContainer.classList.remove('hidden');
+};
+
+speech.onend = () => {
+    waveformContainer.classList.add('hidden');
+};
+
+speech.onerror = () => {
+    waveformContainer.classList.add('hidden');
+    loadingIndicator.classList.add('hidden');
+};
+
+// Listen button
+document.querySelector('#listen').addEventListener('click', () => {
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+    
+    const text = document.querySelector('textarea').value;
+    if (!text) return;
+
+    // Show loading for longer texts
+    if (text.length > 100) {
+        loadingIndicator.classList.remove('hidden');
+        setTimeout(() => loadingIndicator.classList.add('hidden'), 1000);
+    }
+
+    speech.text = text;
     window.speechSynthesis.speak(speech);
-})
+});
 
+// Pause button
+document.querySelector('#pause').addEventListener('click', () => {
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        waveformContainer.classList.add('hidden');
+    }
+});
 
- /* the below code will allow us to control the speech, we could pause and resume */
-document.querySelector('#pause').addEventListener('click',()=>{
-    window.speechSynthesis.pause();
-});  
+// Resume button
+document.querySelector('#resume').addEventListener('click', () => {
+    if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        waveformContainer.classList.remove('hidden');
+    }
+});
 
-document.querySelector('#resume').addEventListener('click',()=>{
-  window.speechSynthesis.resume();
-});  
-/* the below codes are to clear the textarea */
-
-document.querySelector('#clear').addEventListener('click', ()=>{
-  document.querySelector('#textarea').value='';
-})
-
-
+// Clear button
+document.querySelector('#clear').addEventListener('click', () => {
+    document.querySelector('#textarea').value = '';
+    window.speechSynthesis.cancel();
+    waveformContainer.classList.add('hidden');
+    loadingIndicator.classList.add('hidden');
+});
